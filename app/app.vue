@@ -10,9 +10,9 @@ const items = computed<NavigationMenuItem[]>(() => [
     active: route.path == "/"
   },
   {
-    label: 'Post',
-    to: '/post',
-    active: route.path.startsWith('/post')
+    label: 'Product',
+    to: '/product',
+    active: route.path.startsWith('/product')
   },
   {
     label: 'Category',
