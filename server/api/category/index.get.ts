@@ -1,3 +1,8 @@
+import { db } from "~~/server/database/connection"
+import { user } from "~~/server/database/schemas/user.schema"
+
 export default defineEventHandler(async (event) => {
-  return 'Test api example'
+  const users = db.select().from(user);
+
+  return users;
 })
