@@ -1,8 +1,7 @@
-import { db } from "~~/server/database/connection"
-import { user } from "~~/server/database/schemas/user.schema"
+import { db } from "~~/server/database/connection";
+import { category } from "~~/server/database/schemas/category.schema";
 
 export default defineEventHandler(async (event) => {
-  const users = db.select().from(user);
-
-  return users;
+  const categories = db.select().from(category);
+  return categories;
 })
