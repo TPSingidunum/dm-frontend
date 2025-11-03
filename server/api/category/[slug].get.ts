@@ -1,0 +1,20 @@
+import { eq } from "drizzle-orm";
+import { db } from "~~/server/database/connection";
+import { category } from "~~/server/database/schemas/category.schema";
+import { product } from "~~/server/database/schemas/product.schema";
+
+export default defineEventHandler(async (event) => {
+  const slug = getRouterParam(event, 'slug');
+
+  if (!slug){
+    return "Error"
+  }
+
+  const cat = await db.select().from(category).where(eq(category.slug, slug));
+  const allProducts = await db.select().from(product).where(eq(product.category_id, cat[0].category_id ))
+
+  return {
+    category: cat[0],
+    products: allProducts
+  };
+})
