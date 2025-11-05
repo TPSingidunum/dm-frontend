@@ -36,20 +36,20 @@ const items: NavigationMenuItem[][] = [[
   {
     label: 'Categories',
     icon: 'i-lucide-inbox',
-    to: '/admin/categories',
-    active: route.path.startsWith('/admin/categories')
+    to: '/admin/category',
+    active: route.path == '/admin/category'
   },
   {
     label: 'Products',
     icon: 'i-lucide-inbox',
-    to: '/admin/products',
-    active: route.path.startsWith('/admin/products')
+    to: '/admin/product',
+    active: route.path.startsWith('/admin/product')
   },
   {
     label: 'Events',
     icon: 'i-lucide-inbox',
-    to: '/admin/events',
-    active: route.path.startsWith('/admin/events')
+    to: '/admin/event',
+    active: route.path.startsWith('/admin/event')
   },
   {
     label: 'Marketing',
