@@ -1,4 +1,7 @@
 <template>
+  <div class="px-10 pt-4">
+    <UButton icon="i-lucide-arrow-left-to-line" @click="router.back" />
+  </div>
   <div class="grid grid-cols-3 gap-2 px-20 pt-5">
     <div class="col-span-2 h-full">
       <NuxtImg class="mx-auto w-1/2 border"
@@ -32,6 +35,7 @@
 <script lang="ts" setup>
 import type { Product } from '~/types/Product';
 
+const router = useRouter()
 const route = useRoute()
 const slug = route.params.slug;
 
