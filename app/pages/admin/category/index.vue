@@ -4,26 +4,25 @@
       <template #leading>
         <UDashboardSidebarCollapse />
       </template>
+      <template #right>
+        <UButton icon="i-lucide-plus" to="/admin/category/create">Create Category</UButton>
+      </template>
     </UDashboardNavbar>
-    <div>
-      <div class="p-5">
-        <div class="flex flex-col flex-1 w-full">
-          <div class="flex py-3.5">
-            <!-- <UInput :model-value="table?.tableApi?.getColumn('name')?.getFilterValue() as string" class="max-w-sm"
+    <div class="p-5 flex flex-col flex-1 w-full">
+      <div class="flex py-3.5">
+        <!-- <UInput :model-value="table?.tableApi?.getColumn('name')?.getFilterValue() as string" class="max-w-sm"
               placeholder="Filter name..."/> -->
-            <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filter name..."/>
-          </div>
-
-          <UTable ref="table" :data="categories" v-model:global-filter="globalFilter" :columns="columns" class="flex-1" :ui="{
-            base: 'table-fixed border-separate border-spacing-0',
-            thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
-            tbody: '[&>tr]:last:[&>td]:border-b-0',
-            th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
-            td: 'border-b border-default',
-            separator: 'h-0'
-          }" />
-        </div>
+        <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filter name..." />
       </div>
+
+      <UTable ref="table" :data="categories" v-model:global-filter="globalFilter" :columns="columns" class="flex-1" :ui="{
+        base: 'table-fixed border-separate border-spacing-0',
+        thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+        tbody: '[&>tr]:last:[&>td]:border-b-0',
+        th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+        td: 'border-b border-default',
+        separator: 'h-0'
+      }" />
     </div>
   </div>
 </template>

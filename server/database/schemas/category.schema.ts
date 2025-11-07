@@ -7,3 +7,6 @@ export const category = mysqlTable("category", {
     created_at: timestamp("created_at").defaultNow(),
     updated_at: timestamp("updated_at").defaultNow().onUpdateNow(),
 })
+
+export type Category = typeof category.$inferSelect
+export type NewCategory = typeof category.$inferInsert
