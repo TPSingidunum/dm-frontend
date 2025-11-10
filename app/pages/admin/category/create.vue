@@ -21,6 +21,10 @@
           <UFormField label="Slug" name="slug">
             <UInput v-model="state.slug" class="w-full" />
           </UFormField>
+          
+          <UFormField label="Image Url" name="img_url">
+            <UInput v-model="state.img_url" class="w-full" />
+          </UFormField>
 
           <div class="flex justify-end">
             <UButton type="submit" class="cursor-pointer">Create</UButton>
@@ -45,12 +49,14 @@ const form = useTemplateRef('form')
 
 const schema = z.object({
   name: z.string('Name is required').min(3, 'Must be more than 3 charaters').max(64, "Must be less than 3 characters"),
-  slug: z.string('Slug is required').regex(/^[a-z0-9\-]{3,128}$/, "You slug has to contain only lowercase letters, numbers and a - symbol")
+  slug: z.string('Slug is required').regex(/^[a-z0-9\-]{3,128}$/, "You slug has to contain only lowercase letters, numbers and a - symbol"),
+  img_url: z.httpUrl('Image Link is required'),
 })
 type Schema = z.output<typeof schema>
 const state = reactive<Partial<Schema>>({
   name: undefined,
-  slug: undefined
+  slug: undefined,
+  img_url: undefined
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
@@ -58,7 +64,9 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     method: "POST",
     body: event.data,
   }).then((res) => {
-    console.log(res)
+    if (res) {
+      navigateTo('/admin/category')
+    }
   }).catch((error) => {
     // Finish the create statement
     console.log(JSON.stringify(error.data, null, 2))

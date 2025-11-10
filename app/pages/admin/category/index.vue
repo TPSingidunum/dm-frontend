@@ -8,21 +8,38 @@
         <UButton icon="i-lucide-plus" to="/admin/category/create">Create Category</UButton>
       </template>
     </UDashboardNavbar>
-    <div class="p-5 flex flex-col flex-1 w-full">
+    <div class="p-5 pt-0 flex flex-col flex-1 w-full">
       <div class="flex py-3.5">
         <!-- <UInput :model-value="table?.tableApi?.getColumn('name')?.getFilterValue() as string" class="max-w-sm"
               placeholder="Filter name..."/> -->
         <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filter name..." />
       </div>
 
-      <UTable ref="table" :data="categories" v-model:global-filter="globalFilter" :columns="columns" class="flex-1" :ui="{
-        base: 'table-fixed border-separate border-spacing-0',
-        thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
-        tbody: '[&>tr]:last:[&>td]:border-b-0',
-        th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
-        td: 'border-b border-default',
-        separator: 'h-0'
+      <UTable
+        ref="table"
+        :data="categories"
+        v-model:pagination="pagination"
+        v-model:global-filter="globalFilter"
+        :columns="columns"
+        :pagination-options="{
+          getPaginationRowModel: getPaginationRowModel()
+        }"
+        class="flex-1" :ui="{
+          base: 'table-fixed border-separate border-spacing-0',
+          thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+          tbody: '[&>tr]:last:[&>td]:border-b-0',
+          th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+          td: 'border-b border-default',
+          separator: 'h-0'
       }" />
+      <div class="flex justify-center border-t border-default pt-4">
+      <UPagination
+        :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
+        :items-per-page="table?.tableApi?.getState().pagination.pageSize"
+        :total="table?.tableApi?.getFilteredRowModel().rows.length"
+        @update:page="(p) => table?.tableApi?.setPageIndex(p - 1)"
+      />
+    </div>
     </div>
   </div>
 </template>
@@ -30,7 +47,7 @@
 <script lang="ts" setup>
 import type { TableColumn } from '@nuxt/ui';
 import type { Category } from '~/types/Category';
-import type { Row } from '@tanstack/vue-table'
+import { getPaginationRowModel, type Row } from '@tanstack/vue-table'
 import { useClipboard } from '@vueuse/core'
 
 const UButton = resolveComponent('UButton')
@@ -45,11 +62,10 @@ const { copy } = useClipboard()
 const table = useTemplateRef('table')
 const categories: Category[] = await $fetch("/api/category");
 
-// export interface Category {
-//   category_id: number
-//   name: string
-//   slug: string
-// }
+const pagination = ref({
+  pageIndex: 0,
+  pageSize: 5
+})
 
 const globalFilter = ref('')
 

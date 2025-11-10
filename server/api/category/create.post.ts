@@ -19,6 +19,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  // TODO: Fix updated and created At in the schema
+  data.created_at = new Date();
+  data.updated_at = new Date();
   const result = await db.insert(category).values(data);
   if (!result[0].insertId) {
     return false

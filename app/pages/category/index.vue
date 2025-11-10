@@ -4,7 +4,7 @@
     <div class="p-10 grid grid-cols-3 gap-2">
       <UBlogPost
         v-for="category in categories"
-        image="https://news.lenovo.com/wp-content/uploads/2022/12/16_Ideapad_Pro_5i_Hero_Family-e1671470792489.jpg"
+        :image="category.img_url"
         class="w-full text-center"
         :title="category.name"
         :to="`/category/${category.slug}`"
