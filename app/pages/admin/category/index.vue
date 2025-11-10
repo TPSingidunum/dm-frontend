@@ -15,32 +15,25 @@
         <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filter name..." />
       </div>
 
-      <UTable
-        ref="table"
-        :data="categories"
-        v-model:pagination="pagination"
-        v-model:global-filter="globalFilter"
-        :columns="columns"
-        :pagination-options="{
+      <UTable ref="table" :data="categories" v-model:pagination="pagination" v-model:global-filter="globalFilter"
+        :columns="columns" :pagination-options="{
           getPaginationRowModel: getPaginationRowModel()
-        }"
-        class="flex-1" :ui="{
+        }" class="flex-1" :ui="{
           base: 'table-fixed border-separate border-spacing-0',
           thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
           tbody: '[&>tr]:last:[&>td]:border-b-0',
           th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
           td: 'border-b border-default',
           separator: 'h-0'
-      }" />
+        }" />
       <div class="flex justify-center border-t border-default pt-4">
-      <UPagination
-        :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
-        :items-per-page="table?.tableApi?.getState().pagination.pageSize"
-        :total="table?.tableApi?.getFilteredRowModel().rows.length"
-        @update:page="(p) => table?.tableApi?.setPageIndex(p - 1)"
-      />
+        <UPagination :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
+          :items-per-page="table?.tableApi?.getState().pagination.pageSize"
+          :total="table?.tableApi?.getFilteredRowModel().rows.length"
+          @update:page="(p) => table?.tableApi?.setPageIndex(p - 1)" />
+      </div>
     </div>
-    </div>
+    <CategoryDelete :category-id="selectedCategoryId" :open="deleteDialogShow" @close="toggleDeleteDialog" />
   </div>
 </template>
 
@@ -60,7 +53,16 @@ definePageMeta({
 const toast = useToast()
 const { copy } = useClipboard()
 const table = useTemplateRef('table')
+const deleteDialogShow = ref(false);
+const selectedCategoryId = ref(0);
 const categories: Category[] = await $fetch("/api/category");
+
+async function toggleDeleteDialog(refresh: boolean) {
+  deleteDialogShow.value = !deleteDialogShow.value
+  if (refresh) {
+    // categories = await $fetch("/api/category");
+  }
+}
 
 const pagination = ref({
   pageIndex: 0,
@@ -166,7 +168,18 @@ function getRowItems(row: Row<Category>) {
       type: 'separator'
     },
     {
-      label: 'Edit customer'
+      label: 'Edit',
+      onSelect() {
+        navigateTo('/admin/category/update/' + row.original.category_id)
+      }
+    },
+    {
+      label: 'Delete',
+      color: 'warning',
+      onSelect() {
+        selectedCategoryId.value = row.original.category_id;
+        toggleDeleteDialog()
+      }
     },
   ]
 }
