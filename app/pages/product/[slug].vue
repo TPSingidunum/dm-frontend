@@ -41,4 +41,29 @@ const slug = route.params.slug;
 
 const data: Product = await $fetch("/api/product/" + slug)
 
+useSeoMeta({
+  title: data.name, 
+  ogTitle: data.name,
+  description: data.description.substring(0,150) + " ...",
+  ogDescription: data.description.substring(0,150) + " ...",
+  ogImage: 'https://gigatron.rs/_next/image?url=https%3A%2F%2Fbackend.gigatron.rs%2Fmedia%2Fcatalog%2Fproduct%2Fg%2Fo%2Fgoy_pkart_250218_eu_1__1.jpg&w=256&q=50', 
+  ogUrl: 'http://localhost:3000/product/' + slug,
+  twitterTitle: data.name,
+  twitterDescription: data.description.substring(0,150) + " ...",
+  twitterImage: 'https://gigatron.rs/_next/image?url=https%3A%2F%2Fbackend.gigatron.rs%2Fmedia%2Fcatalog%2Fproduct%2Fg%2Fo%2Fgoy_pkart_250218_eu_1__1.jpg&w=256&q=50',
+  twitterCard: 'summary_large_image',
+})
+
+useHead({
+  htmlAttrs: {
+    lang: 'en'
+  },
+  link: [
+    {
+      rel: 'icon',
+      type: 'image/ico',
+      href: '/favicon.ico'
+    }
+  ]
+})
 </script>

@@ -60,6 +60,7 @@ const categories: Category[] = await $fetch("/api/category");
 async function toggleDeleteDialog(refresh: boolean) {
   deleteDialogShow.value = !deleteDialogShow.value
   if (refresh) {
+    // TODO: Implement refresh on toggleDeleteDialog
     // categories = await $fetch("/api/category");
   }
 }
