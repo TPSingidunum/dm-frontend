@@ -8,10 +8,9 @@
         </template>
 
         <NuxtLink :to="`/product/${product.slug}`">
-          <NuxtImg class="mx-auto w-full"
-            src="https://gigatron.rs/_next/image?url=https%3A%2F%2Fbackend.gigatron.rs%2Fmedia%2Fcatalog%2Fproduct%2Fg%2Fo%2Fgoy_pkart_250218_eu_1__1.jpg&w=256&q=50" />
+          <NuxtImg class="mx-auto w-full" :src="product.img_url" />
           <p class="text-2xl font-bold pt-4">{{ product.name }}</p>
-          <p class="text-gray-600">{{ product.description }}</p>
+          <p class="text-gray-600">{{ product.description.substring(0,40) }}</p>
         </NuxtLink>
 
         <template #footer>

@@ -1,7 +1,6 @@
 <template>
-  <UModal :open="open" :title="`Deleting category ${props.categoryId}`" :close="{ onClick: () => emit('close', false) }"
-    description="You are deleting category">
-    <!-- <UButton label="Delete" color="warning" /> -->
+  <UModal :open="open" :title="`Deleting product ${props.productId}`" :close="{ onClick: () => emit('close', false) }"
+    description="You are deleting the product">
 
     <template #footer>
       <p v-bind="error" class="text-red-600"></p>
@@ -20,12 +19,12 @@ defineShortcuts({
 const emit = defineEmits<{ close: [boolean] }>()
 
 const props = defineProps<{
-  categoryId: number
+  productId: number
   open: boolean
 }>();
 
 async function onSubmit() {
-  await $fetch("/api/category/id/" + props.categoryId, {
+  await $fetch("/api/product/id/" + props.productId, {
     method: "DELETE",
   }).then((res) => {
     if (res) {

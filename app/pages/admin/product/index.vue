@@ -1,21 +1,19 @@
 <template>
   <div class="w-full">
-    <UDashboardNavbar title="Categories">
+    <UDashboardNavbar title="Products">
       <template #leading>
         <UDashboardSidebarCollapse />
       </template>
       <template #right>
-        <UButton icon="i-lucide-plus" to="/admin/category/create">Create Category</UButton>
+        <UButton icon="i-lucide-plus" to="/admin/product/create">Create Product</UButton>
       </template>
     </UDashboardNavbar>
     <div class="p-5 pt-0 flex flex-col flex-1 w-full">
       <div class="flex py-3.5">
-        <!-- <UInput :model-value="table?.tableApi?.getColumn('name')?.getFilterValue() as string" class="max-w-sm"
-              placeholder="Filter name..."/> -->
         <UInput v-model="globalFilter" class="max-w-sm" placeholder="Filter name..." />
       </div>
 
-      <UTable ref="table" :data="categories" v-model:pagination="pagination" v-model:global-filter="globalFilter"
+      <UTable ref="table" :data="products" v-model:pagination="pagination" v-model:global-filter="globalFilter"
         :columns="columns" :pagination-options="{
           getPaginationRowModel: getPaginationRowModel()
         }" class="flex-1" :ui="{
@@ -33,15 +31,15 @@
           @update:page="(p) => table?.tableApi?.setPageIndex(p - 1)" />
       </div>
     </div>
-    <CategoryDelete :category-id="selectedCategoryId" :open="deleteDialogShow" @close="toggleDeleteDialog" />
+    <ProductDelete :product-id="selectedProductId" :open="deleteDialogShow" @close="toggleDeleteDialog" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { TableColumn } from '@nuxt/ui';
-import type { Category } from '~/types/Category';
 import { getPaginationRowModel, type Row } from '@tanstack/vue-table'
 import { useClipboard } from '@vueuse/core'
+import type { Product } from '~/types/Product';
 
 const UButton = resolveComponent('UButton')
 const UDropdownMenu = resolveComponent('UDropdownMenu')
@@ -54,8 +52,8 @@ const toast = useToast()
 const { copy } = useClipboard()
 const table = useTemplateRef('table')
 const deleteDialogShow = ref(false);
-const selectedCategoryId = ref(0);
-const categories: Category[] = await $fetch("/api/category");
+const selectedProductId = ref(0);
+const products: Product[] = await $fetch("/api/shop");
 
 async function toggleDeleteDialog(refresh: boolean) {
   deleteDialogShow.value = !deleteDialogShow.value
@@ -72,11 +70,11 @@ const pagination = ref({
 
 const globalFilter = ref('')
 
-const columns: TableColumn<Category>[] = [
+const columns: TableColumn<Product>[] = [
   {
-    accessorKey: 'category_id',
+    accessorKey: 'product_id',
     header: '#',
-    cell: ({ row }) => `#${row.getValue('category_id')}`
+    cell: ({ row }) => `#${row.getValue('product_id')}`
   },
   {
     accessorKey: 'name',
@@ -87,6 +85,11 @@ const columns: TableColumn<Category>[] = [
     accessorKey: 'slug',
     header: 'Slug',
     cell: ({ row }) => row.getValue('slug')
+  },
+  {
+    accessorKey: 'desc',
+    header: 'Description',
+    cell: ({ row }) => row.original.description.substring(0, 20)
   },
   {
     accessorKey: 'created_at',
@@ -147,38 +150,23 @@ const columns: TableColumn<Category>[] = [
   }
 ]
 
-function getRowItems(row: Row<Category>) {
+function getRowItems(row: Row<Product>) {
   return [
     {
       type: 'label',
       label: 'Actions'
     },
     {
-      label: 'Copy category ID',
-      onSelect() {
-        copy(row.original.category_id.toString())
-
-        toast.add({
-          title: 'Category ID copied to clipboard!',
-          color: 'success',
-          icon: 'i-lucide-circle-check'
-        })
-      }
-    },
-    {
-      type: 'separator'
-    },
-    {
       label: 'Edit',
       onSelect() {
-        navigateTo('/admin/category/update/' + row.original.category_id)
+        navigateTo('/admin/product/update/' + row.original.product_id)
       }
     },
     {
       label: 'Delete',
       color: 'warning',
       onSelect() {
-        selectedCategoryId.value = row.original.category_id;
+        selectedProductId.value = row.original.product_id;
         toggleDeleteDialog(false)
       }
     },
