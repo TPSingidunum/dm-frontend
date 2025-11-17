@@ -5,7 +5,7 @@
         <UDashboardSidebarCollapse />
       </template>
     </UDashboardNavbar>
-    <div class="p-5 flex flex-col flex-1 w-full">
+    <div class="p-5 flex flex-1 w-full gap-5">
       <div class="pb-5">
         <UButton icon="i-lucide-arrow-left-to-line" class="cursor-pointer" @click="router.back" />
       </div>
@@ -36,6 +36,29 @@
 
           <div class="flex justify-end">
             <UButton type="submit" class="cursor-pointer">Create</UButton>
+          </div>
+        </UForm>
+      </UCard>
+      <UCard class="w-full md:w-1/2 self-center">
+        <template #header>
+          <h1>Seo Options</h1>
+        </template>
+        <UForm ref="form2" :schema="schema2" :state="state2" class="space-y-4 w-full" @submit="onSubmitSeo">
+          <UFormField label="Seo Title" name="title">
+            <UInput v-model="state2.title" class="w-full" />
+          </UFormField>
+
+          <UFormField label="Seo Description" name="description">
+            <UInput v-model="state2.description" class="w-full" />
+          </UFormField>
+          
+          <UFormField label="Seo Keywords" name="keywords">
+            <UInput v-model="state2.keywords" class="w-full" />
+          </UFormField>
+
+          <div class="flex justify-end gap-5">
+            <UButton @click="generateSeo" class="cursor-pointer">Generate</UButton>
+            <UButton type="submit" class="cursor-pointer">Save</UButton>
           </div>
         </UForm>
       </UCard>
@@ -83,8 +106,56 @@ const state = reactive<Partial<Schema>>({
   img_url: undefined
 })
 
+const schema2 = z.object({
+  title: z.string('Title is required').min(3, 'Must be more than 3 charaters').max(64, "Must be less than 3 characters"),
+  description: z.string('Description is required'),
+  keywords: z.string()
+})
+type Schema2 = z.output<typeof schema2>
+const state2 = reactive<Partial<Schema2>>({
+  title: undefined,
+  description: undefined,
+  keywords: undefined
+})
+
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   await $fetch("/api/product/create", {
+    method: "POST",
+    body: event.data,
+  }).then((res) => {
+    if (res) {
+      navigateTo('/admin/product')
+    }
+  }).catch((error) => {
+    form.value?.setErrors([
+      {
+        message: error.data.data.message,
+        name: error.data.data.field
+      }
+    ])
+  })
+}
+
+async function generateSeo() {
+
+  const data = {
+    title: state.name,
+    description: state.description,
+  }
+
+  await $fetch("/ml/seo/generate/product", {
+    method: "POST",
+    body: data
+  }).then((res) => {
+    console.log(JSON.stringify(res,null, 2))
+    state2.title = res.title
+    state2.description = res.description
+    state2.keywords = res.keywords.join()
+  })
+}
+
+async function onSubmitSeo(event: FormSubmitEvent<Schema2>) {
+  await $fetch("/api/seo/create", {
     method: "POST",
     body: event.data,
   }).then((res) => {

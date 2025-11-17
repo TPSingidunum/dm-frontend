@@ -10,5 +10,11 @@ export default defineNuxtConfig({
       watch: ["server/**/*"]
     }
   },
-  modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/ui']
+  modules: ['@nuxt/eslint', '@nuxt/image', '@nuxt/ui'],
+
+  routeRules: {
+      '/ml/**': {
+          proxy: { to: "http://127.0.0.1:3001/**", },
+      }
+    }
 })
