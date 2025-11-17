@@ -10,10 +10,16 @@ export default defineEventHandler(async (event) => {
     return "Error"
   }
 
-  let prod = await db.select().from(product).where(eq(product.slug, slug));
-  const s = await db.select().from(seo).where(eq(seo.seo_id, prod[0].seo_id))
+  // let prod = await db.select().from(product).where(eq(product.slug, slug));
+  // const s = await db.select().from(seo).where(eq(seo.seo_id, prod[0].seo_id))
+  // prod[0]["seo"] = s
 
-  prod[0]["seo"] = s
+  const prod = db.query.product.findFirst({
+    where: eq(product.slug, slug),
+    with: {
+      seo: true
+    }
+  })
 
-  return prod[0];
+  return prod;
 })
