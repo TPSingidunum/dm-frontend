@@ -28,8 +28,16 @@ import type { Product } from '~/types/Product';
 const router = useRouter()
 const route = useRoute()
 const slug = route.params.slug;
+const { trackEvent } = useEventTracking();
 
 const data: Product = await $fetch("/api/product/" + slug)
+
+// Track product view event
+onMounted(() => {
+  if (data.product_id) {
+    trackEvent(data.product_id, 'view');
+  }
+});
 
 useSeoMeta({
   title: data.name, 

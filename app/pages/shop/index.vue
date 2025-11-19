@@ -1,6 +1,9 @@
 <template>
   <div>
     <h1 class="text-center py-5 text-2xl font-bold">Shop</h1>
+    
+    <ProductRecommendedProducts @add-to-cart="addToShoppingCart" />
+
     <div class="p-10 pt-0 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
       <UCard v-for="product in products">
         <template #header>
@@ -29,11 +32,12 @@
 <script lang="ts" setup>
 import type { Product } from '~/types/Product';
 
-
+const { trackEvent } = useEventTracking();
 const products: Product[] = await $fetch("/api/shop");
 
 function addToShoppingCart(id: number) {
   console.log("Adding product " + id + " to shopping cart")
+  trackEvent(id, 'add_to_cart');
 }
 
 </script>
