@@ -32,14 +32,14 @@ const slug = route.params.slug;
 const data: Product = await $fetch("/api/product/" + slug)
 
 useSeoMeta({
-  title: data.name, 
-  ogTitle: data.name,
-  description: data.description.substring(0,150) + " ...",
-  ogDescription: data.description.substring(0,150) + " ...",
+  title: data.seo?.title, 
+  ogTitle: data.seo?.title,
+  description: data.seo?.description.substring(0,150) + " ...",
+  ogDescription: data.seo?.description.substring(0,150) + " ...",
   ogImage: data.img_url, 
   ogUrl: 'http://localhost:3000/product/' + slug,
-  twitterTitle: data.name,
-  twitterDescription: data.description.substring(0,150) + " ...",
+  twitterTitle: data.seo?.title,
+  twitterDescription: data.seo?.description.substring(0,150) + " ...",
   twitterImage: data.img_url,
   twitterCard: 'summary_large_image',
 })
@@ -54,6 +54,10 @@ useHead({
       type: 'image/ico',
       href: '/favicon.ico'
     }
-  ]
+  ],
+  meta: [
+    { name: 'keywords', content: data.seo?.key_words.join(", ") },
+  ],
+
 })
 </script>

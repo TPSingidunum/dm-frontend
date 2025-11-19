@@ -5,7 +5,6 @@ import { product } from "~~/server/database/schemas/product.schema";
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug");
-  console.log(JSON.stringify(event, null, 2))
 
   if (!slug) {
     throw createError({

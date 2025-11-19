@@ -5,11 +5,11 @@
         <UDashboardSidebarCollapse />
       </template>
     </UDashboardNavbar>
-    <div class="p-5 flex flex-1 w-full gap-5">
+    <div class="p-5 flex flex-1 w-full overflow-auto h-[90%]">
       <div class="pb-5">
         <UButton icon="i-lucide-arrow-left-to-line" class="cursor-pointer" @click="router.back" />
       </div>
-      <UCard class="w-full md:w-1/2 self-center">
+      <UCard class="w-full md:w-1/2 mt-60 self-center mx-auto">
         <template #header>
           <h1> Creating a new product</h1>
         </template>
@@ -23,7 +23,7 @@
           </UFormField>
 
           <UFormField>
-            <USelect v-model="state.category_id" :items="categories" class="w-1/2"/>
+            <USelect placeholder="Select a category" v-model="state.category_id" :items="categories" class="w-1/2"/>
           </UFormField>
           
           <UFormField label="Description" name="description">
@@ -34,31 +34,24 @@
             <UInput v-model="state.img_url" class="w-full" />
           </UFormField>
 
-          <div class="flex justify-end">
-            <UButton type="submit" class="cursor-pointer">Create</UButton>
-          </div>
-        </UForm>
-      </UCard>
-      <UCard class="w-full md:w-1/2 self-center">
-        <template #header>
-          <h1>Seo Options</h1>
-        </template>
-        <UForm ref="form2" :schema="schema2" :state="state2" class="space-y-4 w-full" @submit="onSubmitSeo">
-          <UFormField label="Seo Title" name="title">
-            <UInput v-model="state2.title" class="w-full" />
+          <USeparator/>
+
+          <h1 class="text-lg font-bold"> Seo Options</h1>
+          <UFormField label="Seo Title" name="seo_title">
+            <UInput v-model="state.seo_title" class="w-full" />
           </UFormField>
 
-          <UFormField label="Seo Description" name="description">
-            <UInput v-model="state2.description" class="w-full" />
+          <UFormField label="Seo Description" name="seo_description">
+            <UInput v-model="state.seo_description" class="w-full" />
           </UFormField>
           
-          <UFormField label="Seo Keywords" name="keywords">
-            <UInput v-model="state2.keywords" class="w-full" />
+          <UFormField label="Seo Keywords" name="seo_keywords">
+            <UInputTags v-model="state.seo_keywords" placeholder="Enter tags..." class="w-full"/>
           </UFormField>
 
           <div class="flex justify-end gap-5">
             <UButton @click="generateSeo" class="cursor-pointer">Generate</UButton>
-            <UButton type="submit" class="cursor-pointer">Save</UButton>
+            <UButton type="submit" class="cursor-pointer">Create</UButton>
           </div>
         </UForm>
       </UCard>
@@ -92,31 +85,24 @@ const schema = z.object({
   name: z.string('Name is required').min(3, 'Must be more than 3 charaters').max(64, "Must be less than 3 characters"),
   slug: z.string('Slug is required').regex(/^[a-z0-9\-]{3,128}$/, "You slug has to contain only lowercase letters, numbers and a - symbol"),
   category_id: z.int('Categori required'),
-  seo_id: z.int(),
   description: z.string('Description is required'),
   img_url: z.httpUrl('Image Link is required'),
+  seo_title: z.string('Title is required').min(3, 'Must be more than 3 charaters').max(64, "Must be less than 3 characters"),
+  seo_description: z.string('Description is required'),
+  seo_keywords: z.array(z.string())
 })
 type Schema = z.output<typeof schema>
 const state = reactive<Partial<Schema>>({
   name: undefined,
   slug: undefined,
-  seo_id: 1,
   category_id: undefined,
   description: undefined,
-  img_url: undefined
+  img_url: undefined,
+  seo_title: undefined,
+  seo_description: undefined,
+  seo_keywords: undefined
 })
 
-const schema2 = z.object({
-  title: z.string('Title is required').min(3, 'Must be more than 3 charaters').max(64, "Must be less than 3 characters"),
-  description: z.string('Description is required'),
-  keywords: z.string()
-})
-type Schema2 = z.output<typeof schema2>
-const state2 = reactive<Partial<Schema2>>({
-  title: undefined,
-  description: undefined,
-  keywords: undefined
-})
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   await $fetch("/api/product/create", {
@@ -136,6 +122,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   })
 }
 
+export interface SeoResponse {
+  title: string
+  description: string
+  keywords: string[]
+}
+
 async function generateSeo() {
 
   const data = {
@@ -146,29 +138,12 @@ async function generateSeo() {
   await $fetch("/ml/seo/generate/product", {
     method: "POST",
     body: data
-  }).then((res) => {
-    console.log(JSON.stringify(res,null, 2))
-    state2.title = res.title
-    state2.description = res.description
-    state2.keywords = res.keywords.join()
+  }).then((res: any) => {
+    const result: SeoResponse = res
+    state.seo_title = result.title
+    state.seo_description = result.description
+    state.seo_keywords = result.keywords
   })
 }
 
-async function onSubmitSeo(event: FormSubmitEvent<Schema2>) {
-  await $fetch("/api/seo/create", {
-    method: "POST",
-    body: event.data,
-  }).then((res) => {
-    if (res) {
-      navigateTo('/admin/product')
-    }
-  }).catch((error) => {
-    form.value?.setErrors([
-      {
-        message: error.data.data.message,
-        name: error.data.data.field
-      }
-    ])
-  })
-}
 </script>

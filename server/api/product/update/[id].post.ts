@@ -1,10 +1,23 @@
 import { and, eq, ne } from "drizzle-orm";
 import { db } from "~~/server/database/connection";
 import { NewProduct, product } from "~~/server/database/schemas/product.schema";
+import { seo } from "~~/server/database/schemas/seo.schema";
+
+export interface UpdateProduct {
+  name: string;
+  description: string;
+  img_url: string;
+  slug: string;
+  seo_id: number;
+  category_id: number;
+  seo_title: string,
+  seo_description: string,
+  seo_keywords: string[]
+}
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, "id");
-  const data: NewProduct = await readBody(event);
+  const data: UpdateProduct = await readBody(event);
 
   // Check if ther does exist an slug with this name
   const exists = await db.select().from(product).where(
@@ -25,7 +38,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const result = await db.update(product)
+  const productResult = await db.update(product)
     .set({
       name: data.name,
       slug: data.slug,
@@ -35,6 +48,14 @@ export default defineEventHandler(async (event) => {
       updated_at: new Date()
     })
     .where(eq(product.product_id, Number(id)))
-    
-    return result[0].affectedRows == 1
+
+  const seoResult = await db.update(seo)
+    .set({
+      title: data.seo_title,
+      description: data.seo_description,
+      key_words: data.seo_keywords
+    })
+    .where(eq(seo.seo_id, Number(data.seo_id)))
+
+  return productResult[0].affectedRows == 1 && seoResult[0].affectedRows
 })

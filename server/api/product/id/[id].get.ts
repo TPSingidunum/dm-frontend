@@ -5,11 +5,16 @@ import { product } from "~~/server/database/schemas/product.schema";
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id');
 
-  if (!id){
+  if (!id) {
     return "Error"
   }
 
-  const cat = await db.select().from(product).where(eq(product.product_id, Number(id)));
+  const prod = db.query.product.findFirst({
+    where: eq(product.product_id, Number(id)),
+    with: {
+      seo: true
+    }
+  })
 
-  return cat[0];
+  return prod;
 })

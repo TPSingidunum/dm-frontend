@@ -4,4 +4,11 @@ export interface Product {
   name: string
   img_url: string
   description: string
+  seo?: Seo
+}
+
+export interface Seo {
+  title: string,
+  description: string,
+  key_words: string[]
 }
