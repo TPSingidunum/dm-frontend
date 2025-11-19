@@ -2,6 +2,14 @@
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
+## Features
+
+- **Product Management**: Browse and manage products with categories
+- **User Event Tracking**: Track user interactions (views, add-to-cart actions)
+- **Product Recommendations**: Personalized product recommendations based on user behavior
+
+For detailed information about event tracking and recommendations, see [docs/USER_EVENT_TRACKING.md](docs/USER_EVENT_TRACKING.md).
+
 ## Setup
 
 Make sure to install dependencies:
