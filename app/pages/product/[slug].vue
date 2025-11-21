@@ -14,8 +14,9 @@
         <UBadge color="error">Sale</UBadge>
         <p class="text-2xl font-bold pt-4">{{ data.name }}</p>
         <p class="text-gray-600">{{ data.description }}</p>
-        <p class="text-2xl font-bold">15$</p>
-        <UButton class="w-full">Add to cart</UButton>
+        <p class="text-2xl pb-2 font-bold">15$</p>
+        <UButton @click="addToCart(data.product_id)" class="w-full mb-2 cursor-pointer">Add to cart</UButton>
+        <UButton @click="buy(data.product_id)" variant="outline" class="w-full cursor-pointer">Buy</UButton>
       </div>
     </div>
 
@@ -27,19 +28,25 @@ import type { Product } from '~/types/Product';
 
 const router = useRouter()
 const route = useRoute()
+const toast = useToast()
 const slug = route.params.slug;
 
 const data: Product = await $fetch("/api/product/" + slug)
 
+// onMounted -> Does a task during the page render 
+onMounted(async () => {
+  trackEvent('view', data.product_id)
+})
+
 useSeoMeta({
-  title: data.seo?.title, 
+  title: data.seo?.title,
   ogTitle: data.seo?.title,
-  description: data.seo?.description.substring(0,150) + " ...",
-  ogDescription: data.seo?.description.substring(0,150) + " ...",
-  ogImage: data.img_url, 
+  description: data.seo?.description.substring(0, 150) + " ...",
+  ogDescription: data.seo?.description.substring(0, 150) + " ...",
+  ogImage: data.img_url,
   ogUrl: 'http://localhost:3000/product/' + slug,
   twitterTitle: data.seo?.title,
-  twitterDescription: data.seo?.description.substring(0,150) + " ...",
+  twitterDescription: data.seo?.description.substring(0, 150) + " ...",
   twitterImage: data.img_url,
   twitterCard: 'summary_large_image',
 })
@@ -60,4 +67,26 @@ useHead({
   ],
 
 })
+
+async function addToCart(product_id: number) {
+  const result = await addToShoppingCartEvent(product_id);
+  if (result) {
+    toast.add({
+      title: 'Succsessfully added to shopping cart',
+      description: data.name,
+      icon: 'i-lucide-calendar-days'
+    })
+  }
+}
+
+async function buy(product_id: number) {
+  const result = await buyProductEvent(product_id);
+  if (result) {
+    toast.add({
+      title: 'Succsessfully bought item',
+      description: data.name,
+      icon: 'i-lucide-calendar-days'
+    })
+  }
+}
 </script>

@@ -14,10 +14,10 @@ export function getOrGenerateSessionId() {
     }
 }
 
-export async function tractEvent(eventType: string, productId: number) {
+export async function trackEvent(eventType: string, productId: number) {
 
     const sessionId = getOrGenerateSessionId();
-    await $fetch("/api/event/tract", {
+    return await $fetch("/api/event/track", {
         method: "POST",
         body: {
             event_type: eventType,
@@ -25,4 +25,13 @@ export async function tractEvent(eventType: string, productId: number) {
             user_session: sessionId
         }
     })
+}
+
+export async function addToShoppingCartEvent(product_id: number) {
+    // To save this to a shopping cart componnet to show the user
+    return trackEvent('add_to_cart', product_id);
+}
+
+export async function buyProductEvent(product_id: number) {
+    return trackEvent('purchase', product_id);
 }
