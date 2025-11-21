@@ -2,6 +2,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import * as productSchema from "../database/schemas/product.schema"
 import * as seoSchema from "../database/schemas/seo.schema"
+import * as eventSchema from "../database/schemas/event.schema"
 
 const connection = mysql.createPool({
     host: process.env.DB_HOST, // localhost
@@ -18,7 +19,8 @@ const connection = mysql.createPool({
 export const db = drizzle(connection, {
     schema: {
         ...productSchema,
-        ...seoSchema
+        ...seoSchema,
+        ...eventSchema
     },
     mode: "default"
 });
