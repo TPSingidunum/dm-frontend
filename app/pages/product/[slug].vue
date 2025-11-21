@@ -9,6 +9,14 @@
         {{ data.description }}
       </p>
     </div>
+    <div>
+      <div>
+        <h1>Recomendations</h1>
+        <div v-for="r in recomendations">
+          {{  r.name }}
+        </div>
+      </div>
+    </div>
     <div class="relative">
       <div class="fixed px-5 py-5 border-2 rounded-lg w-[300px]">
         <UBadge color="error">Sale</UBadge>
@@ -36,6 +44,11 @@ const data: Product = await $fetch("/api/product/" + slug)
 // onMounted -> Does a task during the page render 
 onMounted(async () => {
   trackEvent('view', data.product_id)
+})
+
+const recomendations = ref([])
+onMounted(async () => {
+  recomendations.value = await $fetch("/ml/recommendations/"+data.product_id)
 })
 
 useSeoMeta({
