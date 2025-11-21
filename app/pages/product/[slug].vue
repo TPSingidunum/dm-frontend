@@ -8,12 +8,19 @@
       <p class="pt-5">
         {{ data.description }}
       </p>
-    </div>
-    <div>
-      <div>
-        <h1>Recomendations</h1>
-        <div v-for="r in recomendations">
-          {{  r.name }}
+
+      <!-- Recommendations Section -->
+      <div v-if="recommendations && recommendations.length > 0" class="mt-10">
+        <h2 class="text-2xl font-bold mb-4">Recommended Products</h2>
+        <div class="grid grid-cols-3 gap-4">
+          <UCard v-for="rec in recommendations" :key="rec.product_id">
+            <NuxtLink :to="`/product/${rec.slug}`">
+              <NuxtImg class="w-full h-32 object-cover" :src="rec.img_url" />
+              <p class="font-bold mt-2">{{ rec.name }}</p>
+              <p class="text-sm text-gray-600">{{ rec.description?.substring(0, 40) }}</p>
+              <p class="font-bold mt-1">15$</p>
+            </NuxtLink>
+          </UCard>
         </div>
       </div>
     </div>
@@ -45,10 +52,10 @@ const data: Product = await $fetch("/api/product/" + slug)
 onMounted(async () => {
   trackEvent('view', data.product_id)
 })
-
-const recomendations = ref([])
+  
+const recommendations = ref([])
 onMounted(async () => {
-  recomendations.value = await $fetch("/ml/recommendations/"+data.product_id)
+  recommendations.value = await $fetch("/ml/recommendations/"+data.product_id)
 })
 
 useSeoMeta({
