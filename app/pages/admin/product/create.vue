@@ -88,7 +88,7 @@ const schema = z.object({
   description: z.string('Description is required'),
   img_url: z.httpUrl('Image Link is required'),
   seo_title: z.string('Title is required').min(3, 'Must be more than 3 charaters').max(64, "Must be less than 3 characters"),
-  seo_description: z.string('Description is required'),
+  seo_description: z.string('Description is required').max(60, "Must be less than 60 characters"),
   seo_keywords: z.array(z.string())
 })
 type Schema = z.output<typeof schema>
