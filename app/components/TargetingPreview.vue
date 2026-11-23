@@ -87,7 +87,6 @@ interface Totals {
 interface AudienceResponse {
   campaign_id: number
   mode: string
-  preview_only: boolean
   limit_applied: number
   audience: AudienceRow[]
   totals: Totals
@@ -96,7 +95,6 @@ interface AudienceResponse {
 
 interface ComparisonResponse {
   campaign_id: number
-  preview_only: boolean
   limit_applied: number
   score: { customer_ids: number[]; totals: Totals }
   rule: { customer_ids: number[]; totals: Totals }
